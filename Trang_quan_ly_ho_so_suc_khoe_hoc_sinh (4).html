@@ -1,0 +1,1980 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quản lý hồ sơ sức khỏe học sinh</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial, sans-serif;
+    background:#f3f7fb;
+    color:#263238;
+}
+
+/* ================= HEADER ================= */
+
+.header{
+    background:linear-gradient(135deg,#087fce,#00a8e8);
+    color:white;
+    padding:16px;
+    position:sticky;
+    top:0;
+    z-index:1000;
+    box-shadow:0 3px 10px rgba(0,0,0,.15);
+}
+
+.header h1{
+    font-size:20px;
+    margin-bottom:4px;
+}
+
+.header p{
+    font-size:13px;
+    opacity:.9;
+}
+
+/* ================= MENU ================= */
+
+.menu{
+    display:flex;
+    overflow-x:auto;
+    gap:8px;
+    padding:10px;
+    background:white;
+    border-bottom:1px solid #ddd;
+    position:sticky;
+    top:76px;
+    z-index:999;
+}
+
+.menu button{
+    border:none;
+    background:#eef6fb;
+    color:#12608d;
+    padding:10px 14px;
+    border-radius:20px;
+    white-space:nowrap;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.menu button.active,
+.menu button:hover{
+    background:#0787d1;
+    color:white;
+}
+
+/* ================= CONTENT ================= */
+
+.container{
+    max-width:1200px;
+    margin:auto;
+    padding:15px;
+}
+
+.page{
+    display:none;
+}
+
+.page.active{
+    display:block;
+}
+
+/* ================= CARDS ================= */
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+    margin-bottom:20px;
+}
+
+.card{
+    background:white;
+    border-radius:14px;
+    padding:18px;
+    box-shadow:0 2px 10px rgba(0,0,0,.07);
+}
+
+.stat-title{
+    color:#68777f;
+    font-size:14px;
+}
+
+.stat-number{
+    font-size:28px;
+    font-weight:bold;
+    color:#087fce;
+    margin-top:8px;
+}
+
+.card h2{
+    font-size:18px;
+    margin-bottom:15px;
+}
+
+/* ================= FORM ================= */
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+}
+
+.form-group{
+    display:flex;
+    flex-direction:column;
+}
+
+.form-group.full{
+    grid-column:1/-1;
+}
+
+label{
+    font-size:14px;
+    font-weight:bold;
+    margin-bottom:5px;
+}
+
+input,
+select,
+textarea{
+    width:100%;
+    padding:11px;
+    border:1px solid #ccd6dd;
+    border-radius:8px;
+    font-size:15px;
+    background:white;
+}
+
+textarea{
+    min-height:90px;
+    resize:vertical;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+    outline:none;
+    border-color:#0787d1;
+    box-shadow:0 0 0 2px rgba(0,135,209,.1);
+}
+
+/* ================= BUTTON ================= */
+
+.btn{
+    border:none;
+    padding:11px 16px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+    margin:4px;
+}
+
+.btn-primary{
+    background:#0787d1;
+    color:white;
+}
+
+.btn-success{
+    background:#20a464;
+    color:white;
+}
+
+.btn-danger{
+    background:#dc3545;
+    color:white;
+}
+
+.btn-warning{
+    background:#f0a500;
+    color:white;
+}
+
+.btn-secondary{
+    background:#68777f;
+    color:white;
+}
+
+.actions{
+    margin-top:15px;
+}
+
+/* ================= SEARCH ================= */
+
+.search-box{
+    display:grid;
+    grid-template-columns:2fr 1fr auto;
+    gap:10px;
+    margin-bottom:15px;
+}
+
+/* ================= TABLE ================= */
+
+.table-wrapper{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+}
+
+th,
+td{
+    border-bottom:1px solid #e4e8eb;
+    padding:11px 8px;
+    text-align:left;
+    font-size:14px;
+}
+
+th{
+    background:#eef7fc;
+    color:#155d83;
+}
+
+tr:hover{
+    background:#f8fbfd;
+}
+
+/* ================= BADGE ================= */
+
+.badge{
+    display:inline-block;
+    padding:5px 9px;
+    border-radius:15px;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.badge-green{
+    background:#d9f5e5;
+    color:#17723e;
+}
+
+.badge-orange{
+    background:#fff0cc;
+    color:#9a6500;
+}
+
+.badge-red{
+    background:#ffe0e3;
+    color:#a51d2d;
+}
+
+/* ================= PROFILE ================= */
+
+.profile-header{
+    background:linear-gradient(135deg,#0787d1,#00a8e8);
+    color:white;
+    padding:20px;
+    border-radius:14px;
+    margin-bottom:15px;
+}
+
+.profile-name{
+    font-size:24px;
+    font-weight:bold;
+}
+
+.profile-code{
+    opacity:.9;
+    margin-top:5px;
+}
+
+.health-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+}
+
+.health-item{
+    background:#f5f9fc;
+    padding:14px;
+    border-radius:10px;
+}
+
+.health-item small{
+    display:block;
+    color:#68777f;
+    margin-bottom:5px;
+}
+
+.health-item strong{
+    font-size:18px;
+    color:#087fce;
+}
+
+/* ================= MODAL ================= */
+
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.5);
+    z-index:2000;
+    padding:20px;
+    overflow:auto;
+}
+
+.modal.show{
+    display:block;
+}
+
+.modal-content{
+    max-width:800px;
+    margin:30px auto;
+    background:white;
+    border-radius:15px;
+    padding:20px;
+}
+
+.modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:15px;
+}
+
+.close{
+    border:none;
+    background:none;
+    font-size:28px;
+    cursor:pointer;
+}
+
+/* ================= EMPTY ================= */
+
+.empty{
+    text-align:center;
+    padding:40px;
+    color:#777;
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:700px){
+
+    .header h1{
+        font-size:17px;
+    }
+
+    .stats{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .search-box{
+        grid-template-columns:1fr;
+    }
+
+    .health-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .container{
+        padding:10px;
+    }
+
+    .card{
+        padding:14px;
+    }
+
+    .btn{
+        width:auto;
+    }
+
+    th,
+    td{
+        white-space:nowrap;
+    }
+}
+
+/* ================= MOBILE-FIRST FIX ================= */
+html,body{width:100%;min-width:0;overflow-x:hidden;}
+button,input,select,textarea{font-family:inherit;touch-action:manipulation;}
+input,select,textarea{min-height:46px;font-size:16px;}
+.btn{min-height:46px;padding:11px 14px;}
+@media(max-width:700px){
+  .header{padding:14px 12px;position:sticky;top:0;}
+  .header h1{font-size:17px;line-height:1.35;}
+  .header p{font-size:13px;}
+  .menu{top:67px;padding:8px;gap:7px;-webkit-overflow-scrolling:touch;}
+  .menu button{min-height:44px;padding:10px 13px;font-size:14px;}
+  .container{padding:8px;}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
+  .card{padding:13px;border-radius:12px;}
+  .stat-number{font-size:24px;}
+  .form-grid{grid-template-columns:1fr;gap:10px;}
+  .form-group.full{grid-column:auto;}
+  label{font-size:14px;}
+  .search-box{grid-template-columns:1fr;gap:8px;}
+  .search-box input,.search-box select{width:100%;}
+  .table-wrapper{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  table{min-width:760px;}
+  .modal{padding:8px;}
+  .modal-content{margin:8px auto;padding:14px;border-radius:12px;width:100%;}
+  .modal-header{position:sticky;top:0;background:#fff;padding-bottom:8px;z-index:2;}
+  .actions{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+  .actions .btn{width:100%;margin:0;}
+  .profile-header{padding:15px;}
+}
+@media(max-width:420px){
+  .stats{grid-template-columns:1fr 1fr;}
+  .card h2{font-size:17px;}
+  .actions{grid-template-columns:1fr;}
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+
+<header class="header">
+    <h1>🩺 QUẢN LÝ HỒ SƠ SỨC KHỎE HỌC SINH</h1>
+    <p>Trường THPT Cần Đăng</p>
+</header>
+
+<!-- ================= MENU ================= -->
+
+<nav class="menu">
+
+    <button class="active" onclick="showPage('dashboard',this)">
+        🏠 Tổng quan
+    </button>
+
+    <button onclick="showPage('students',this)">
+        👨‍🎓 Học sinh
+    </button>
+
+    <button onclick="showPage('followup',this)">
+        ⚠️ Theo dõi
+    </button>
+
+    <button onclick="showPage('reports',this)">
+        📊 Thống kê
+    </button>
+
+    <button onclick="showPage('backup',this)">
+        💾 Sao lưu
+    </button>
+
+</nav>
+
+<div class="container">
+
+<!-- =====================================================
+     DASHBOARD
+===================================================== -->
+
+<section id="dashboard" class="page active">
+
+    <div class="stats">
+
+        <div class="card">
+            <div class="stat-title">Tổng học sinh</div>
+            <div class="stat-number" id="totalStudents">0</div>
+        </div>
+
+        <div class="card">
+            <div class="stat-title">Đã có hồ sơ</div>
+            <div class="stat-number" id="profileStudents">0</div>
+        </div>
+
+        <div class="card">
+            <div class="stat-title">Đã khám</div>
+            <div class="stat-number" id="examinedStudents">0</div>
+        </div>
+
+        <div class="card">
+            <div class="stat-title">Cần theo dõi</div>
+            <div class="stat-number" id="followStudents">0</div>
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>📌 Hoạt động nhanh</h2>
+
+        <button class="btn btn-primary"
+                onclick="openStudentModal()">
+            ➕ Thêm học sinh
+        </button>
+
+        <button class="btn btn-success"
+                onclick="showPage('students')">
+            👨‍🎓 Danh sách học sinh
+        </button>
+
+        <button class="btn btn-warning"
+                onclick="showPage('followup')">
+            ⚠️ Học sinh cần theo dõi
+        </button>
+
+    </div>
+
+
+    <br>
+
+    <div class="card">
+
+        <h2>ℹ️ Mô hình quản lý</h2>
+
+        <p>
+            Học sinh → Hồ sơ sức khỏe → Khám sức khỏe →
+            Cập nhật chỉ số → Theo dõi → Thống kê →
+            Báo cáo → Chăm sóc sức khỏe.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     STUDENTS
+===================================================== -->
+
+<section id="students" class="page">
+
+    <div class="card">
+
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+
+            <h2>👨‍🎓 Danh sách học sinh</h2>
+
+            <button class="btn btn-primary"
+                    onclick="openStudentModal()">
+                ➕ Thêm học sinh
+            </button>
+
+        </div>
+
+        <br>
+
+        <div class="search-box">
+
+            <input
+                id="searchInput"
+                placeholder="🔎 Tìm tên, mã học sinh..."
+                oninput="renderStudents()">
+
+            <select id="classFilter"
+                    onchange="renderStudents()">
+
+                <option value="">Tất cả lớp</option>
+
+            </select>
+
+        </div>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>STT</th>
+                        <th>Mã HS</th>
+                        <th>Họ và tên</th>
+                        <th>Lớp</th>
+                        <th>Giới tính</th>
+                        <th>BMI</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="studentTable">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     FOLLOW UP
+===================================================== -->
+
+<section id="followup" class="page">
+
+    <div class="card">
+
+        <h2>⚠️ Học sinh cần theo dõi</h2>
+
+        <p style="margin-bottom:15px;color:#666">
+            Danh sách này chỉ có ý nghĩa hỗ trợ nhân viên y tế
+            xem xét và theo dõi, không thay thế chẩn đoán y khoa.
+        </p>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Học sinh</th>
+                        <th>Lớp</th>
+                        <th>Nội dung cần theo dõi</th>
+                        <th>Thao tác</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="followTable">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     REPORTS
+===================================================== -->
+
+<section id="reports" class="page">
+
+    <div class="stats">
+
+        <div class="card">
+
+            <div class="stat-title">
+                Nam
+            </div>
+
+            <div class="stat-number"
+                 id="maleCount">
+                0
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="stat-title">
+                Nữ
+            </div>
+
+            <div class="stat-number"
+                 id="femaleCount">
+                0
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="stat-title">
+                BMI bình thường
+            </div>
+
+            <div class="stat-number"
+                 id="normalBMI">
+                0
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="stat-title">
+                Có vấn đề cần theo dõi
+            </div>
+
+            <div class="stat-number"
+                 id="problemCount">
+                0
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>📊 Thống kê theo lớp</h2>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Lớp</th>
+                        <th>Số HS</th>
+                        <th>Nam</th>
+                        <th>Nữ</th>
+                        <th>Đã khám</th>
+                        <th>Cần theo dõi</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="classReport">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     BACKUP
+===================================================== -->
+
+<section id="backup" class="page">
+
+    <div class="card">
+
+        <h2>💾 Sao lưu và phục hồi dữ liệu</h2>
+
+        <p style="margin-bottom:15px;color:#666">
+            Dữ liệu hiện được lưu trên trình duyệt của thiết bị.
+            Hãy sao lưu thường xuyên để tránh mất dữ liệu.
+        </p>
+
+        <button class="btn btn-success"
+                onclick="exportData()">
+            📤 Xuất dữ liệu
+        </button>
+
+        <button class="btn btn-primary"
+                onclick="document.getElementById('importFile').click()">
+            📥 Nhập dữ liệu
+        </button>
+
+        <input
+            type="file"
+            id="importFile"
+            accept=".json"
+            style="display:none"
+            onchange="importData(event)">
+
+        <button class="btn btn-danger"
+                onclick="clearAllData()">
+            🗑️ Xóa toàn bộ dữ liệu
+        </button>
+
+    </div>
+
+</section>
+
+</div>
+
+
+<!-- =====================================================
+     MODAL HỌC SINH
+===================================================== -->
+
+<div id="studentModal" class="modal">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2 id="modalTitle">
+                Thêm học sinh
+            </h2>
+
+            <button class="close"
+                    onclick="closeModal()">
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="studentForm"
+              onsubmit="saveStudent(event)">
+
+            <input type="hidden" id="editIndex">
+
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label>Mã học sinh</label>
+
+                    <input
+                        id="studentCode"
+                        required
+                        placeholder="VD: HS0001">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Họ và tên</label>
+
+                    <input
+                        id="studentName"
+                        required
+                        placeholder="Nguyễn Văn A">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Ngày sinh</label>
+
+                    <input
+                        type="date"
+                        id="birthDate">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Giới tính</label>
+
+                    <select id="gender">
+
+                        <option value="Nam">
+                            Nam
+                        </option>
+
+                        <option value="Nữ">
+                            Nữ
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Lớp</label>
+
+                    <input
+                        id="className"
+                        required
+                        placeholder="VD: 10A1">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Chiều cao (cm)</label>
+
+                    <input
+                        type="number"
+                        id="height"
+                        step="0.1"
+                        oninput="calculateBMI()">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Cân nặng (kg)</label>
+
+                    <input
+                        type="number"
+                        id="weight"
+                        step="0.1"
+                        oninput="calculateBMI()">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>BMI</label>
+
+                    <input
+                        id="bmi"
+                        readonly
+                        placeholder="Tự động tính">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Huyết áp</label>
+
+                    <input
+                        id="bloodPressure"
+                        placeholder="VD: 110/70 mmHg">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Thị lực mắt phải</label>
+
+                    <input
+                        id="visionRight"
+                        placeholder="VD: 10/10">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Thị lực mắt trái</label>
+
+                    <input
+                        id="visionLeft"
+                        placeholder="VD: 10/10">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Trạng thái</label>
+
+                    <select id="status">
+
+                        <option value="Bình thường">
+                            Bình thường
+                        </option>
+
+                        <option value="Cần theo dõi">
+                            Cần theo dõi
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label>
+                        Kết quả / nội dung cần theo dõi
+                    </label>
+
+                    <textarea
+                        id="result"
+                        placeholder="Nhập kết quả khám hoặc nội dung cần theo dõi..."></textarea>
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label>
+                        Ghi chú
+                    </label>
+
+                    <textarea
+                        id="note"
+                        placeholder="Ghi chú thêm..."></textarea>
+
+                </div>
+
+            </div>
+
+
+            <div class="actions">
+
+                <button
+                    type="submit"
+                    class="btn btn-primary">
+                    💾 Lưu hồ sơ
+                </button>
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    onclick="closeModal()">
+                    Hủy
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+
+<!-- MODAL XEM HỒ SƠ -->
+<div id="viewStudentModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>👤 Hồ sơ sức khỏe</h2>
+      <button class="close" onclick="closeViewModal()">×</button>
+    </div>
+    <div id="viewStudentContent"></div>
+  </div>
+</div>
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script>
+
+let students =
+    JSON.parse(localStorage.getItem("healthStudents")) || [];
+
+
+/* =====================================================
+   HIỂN THỊ TRANG
+===================================================== */
+
+function showPage(pageId, button){
+
+    document.querySelectorAll(".page")
+        .forEach(page => page.classList.remove("active"));
+
+    document.getElementById(pageId)
+        .classList.add("active");
+
+
+    document.querySelectorAll(".menu button")
+        .forEach(btn => btn.classList.remove("active"));
+
+    if(button){
+        button.classList.add("active");
+    }
+
+
+    updateDashboard();
+    renderStudents();
+    renderFollowUp();
+    renderReports();
+
+}
+
+
+/* =====================================================
+   LƯU DỮ LIỆU
+===================================================== */
+
+function saveData(){
+
+    localStorage.setItem(
+        "healthStudents",
+        JSON.stringify(students)
+    );
+
+}
+
+
+/* =====================================================
+   MỞ FORM
+===================================================== */
+
+function openStudentModal(index = null){
+
+    document
+        .getElementById("studentModal")
+        .classList.add("show");
+
+
+    if(index === null){
+
+        document.getElementById("modalTitle")
+            .innerText = "Thêm học sinh";
+
+        document.getElementById("studentForm").reset();
+
+        document.getElementById("editIndex").value = "";
+
+        document.getElementById("bmi").value = "";
+
+    }
+
+    else{
+
+        let s = students[index];
+
+        document.getElementById("modalTitle")
+            .innerText = "Cập nhật hồ sơ";
+
+        document.getElementById("editIndex")
+            .value = index;
+
+        document.getElementById("studentCode")
+            .value = s.code || "";
+
+        document.getElementById("studentName")
+            .value = s.name || "";
+
+        document.getElementById("birthDate")
+            .value = s.birth || "";
+
+        document.getElementById("gender")
+            .value = s.gender || "Nam";
+
+        document.getElementById("className")
+            .value = s.className || "";
+
+        document.getElementById("height")
+            .value = s.height || "";
+
+        document.getElementById("weight")
+            .value = s.weight || "";
+
+        document.getElementById("bmi")
+            .value = s.bmi || "";
+
+        document.getElementById("bloodPressure")
+            .value = s.bp || "";
+
+        document.getElementById("visionRight")
+            .value = s.visionRight || "";
+
+        document.getElementById("visionLeft")
+            .value = s.visionLeft || "";
+
+        document.getElementById("status")
+            .value = s.status || "Bình thường";
+
+        document.getElementById("result")
+            .value = s.result || "";
+
+        document.getElementById("note")
+            .value = s.note || "";
+
+    }
+
+}
+
+
+/* =====================================================
+   ĐÓNG FORM
+===================================================== */
+
+function closeModal(){
+
+    document
+        .getElementById("studentModal")
+        .classList.remove("show");
+
+}
+
+
+/* =====================================================
+   TÍNH BMI
+===================================================== */
+
+function calculateBMI(){
+
+    let height =
+        parseFloat(document.getElementById("height").value);
+
+    let weight =
+        parseFloat(document.getElementById("weight").value);
+
+
+    if(height > 0 && weight > 0){
+
+        let h = height / 100;
+
+        let bmi = weight / (h * h);
+
+        document.getElementById("bmi").value =
+            bmi.toFixed(1);
+
+    }
+
+}
+
+
+/* =====================================================
+   LƯU HỌC SINH
+===================================================== */
+
+function saveStudent(event){
+
+    event.preventDefault();
+
+
+    calculateBMI();
+
+
+    let index =
+        document.getElementById("editIndex").value;
+
+
+    let student = {
+
+        code:
+            document.getElementById("studentCode").value.trim(),
+
+        name:
+            document.getElementById("studentName").value.trim(),
+
+        birth:
+            document.getElementById("birthDate").value,
+
+        gender:
+            document.getElementById("gender").value,
+
+        className:
+            document.getElementById("className").value.trim(),
+
+        height:
+            document.getElementById("height").value,
+
+        weight:
+            document.getElementById("weight").value,
+
+        bmi:
+            document.getElementById("bmi").value,
+
+        bp:
+            document.getElementById("bloodPressure").value,
+
+        visionRight:
+            document.getElementById("visionRight").value,
+
+        visionLeft:
+            document.getElementById("visionLeft").value,
+
+        status:
+            document.getElementById("status").value,
+
+        result:
+            document.getElementById("result").value,
+
+        note:
+            document.getElementById("note").value,
+
+        updated:
+            new Date().toLocaleString("vi-VN")
+
+    };
+
+
+    if(index === ""){
+
+        students.push(student);
+
+    }
+
+    else{
+
+        students[parseInt(index)] = student;
+
+    }
+
+
+    saveData();
+
+    closeModal();
+
+    updateDashboard();
+
+    renderStudents();
+
+    renderFollowUp();
+
+    renderReports();
+
+}
+
+
+/* =====================================================
+   HIỂN THỊ DANH SÁCH
+===================================================== */
+
+function renderStudents(){
+
+    let table =
+        document.getElementById("studentTable");
+
+
+    let search =
+        (document.getElementById("searchInput")?.value || "")
+        .toLowerCase();
+
+
+    let classFilter =
+        document.getElementById("classFilter")?.value || "";
+
+
+    let filtered = students.filter(s => {
+
+        let text =
+            `${s.code} ${s.name}`.toLowerCase();
+
+        return text.includes(search)
+            && (!classFilter || s.className === classFilter);
+
+    });
+
+
+    table.innerHTML = "";
+
+
+    if(filtered.length === 0){
+
+        table.innerHTML = `
+        <tr>
+            <td colspan="8" class="empty">
+                Chưa có dữ liệu học sinh
+            </td>
+        </tr>`;
+
+        updateClassFilter();
+
+        return;
+
+    }
+
+
+    filtered.forEach((s) => {
+
+        let realIndex =
+            students.indexOf(s);
+
+
+        let bmiText =
+            s.bmi
+            ? s.bmi
+            : "-";
+
+
+        let badge =
+            s.status === "Cần theo dõi"
+            ? `<span class="badge badge-orange">
+                Cần theo dõi
+               </span>`
+            : `<span class="badge badge-green">
+                Bình thường
+               </span>`;
+
+
+        table.innerHTML += `
+
+        <tr>
+
+            <td>${realIndex + 1}</td>
+
+            <td>${escapeHTML(s.code)}</td>
+
+            <td>
+                <strong>
+                    ${escapeHTML(s.name)}
+                </strong>
+            </td>
+
+            <td>${escapeHTML(s.className)}</td>
+
+            <td>${s.gender}</td>
+
+            <td>${bmiText}</td>
+
+            <td>${badge}</td>
+
+            <td>
+
+                <button
+                    class="btn btn-primary"
+                    onclick="openStudentModal(${realIndex})">
+                    Sửa
+                </button>
+
+                <button
+                    class="btn btn-success"
+                    onclick="viewStudent(${realIndex})">
+                    Xem
+                </button>
+
+                <button
+                    class="btn btn-danger"
+                    onclick="deleteStudent(${realIndex})">
+                    Xóa
+                </button>
+
+            </td>
+
+        </tr>
+
+        `;
+
+    });
+
+
+    updateClassFilter();
+
+}
+
+
+/* =====================================================
+   LỌC LỚP
+===================================================== */
+
+function updateClassFilter(){
+
+    let select =
+        document.getElementById("classFilter");
+
+    if(!select) return;
+
+
+    let current =
+        select.value;
+
+
+    let classes =
+        [...new Set(
+            students
+            .map(s => s.className)
+            .filter(Boolean)
+        )]
+        .sort();
+
+
+    select.innerHTML =
+        `<option value="">Tất cả lớp</option>`;
+
+
+    classes.forEach(c => {
+
+        select.innerHTML +=
+            `<option value="${escapeHTML(c)}">
+                ${escapeHTML(c)}
+             </option>`;
+
+    });
+
+
+    select.value = current;
+
+}
+
+
+/* =====================================================
+   XEM HỒ SƠ
+===================================================== */
+
+function viewStudent(index){
+    const s = students[index];
+    const box = document.getElementById("viewStudentContent");
+    if(!box) return;
+    box.innerHTML = `
+      <div class="profile-header">
+        <div class="profile-name">${escapeHTML(s.name || "Chưa có tên")}</div>
+        <div class="profile-code">Mã HS: ${escapeHTML(s.code || "-")} · Lớp: ${escapeHTML(s.className || "-")}</div>
+      </div>
+      <div class="health-grid">
+        <div class="health-item"><small>Ngày sinh</small><strong>${escapeHTML(s.birth || "-")}</strong></div>
+        <div class="health-item"><small>Giới tính</small><strong>${escapeHTML(s.gender || "-")}</strong></div>
+        <div class="health-item"><small>Chiều cao</small><strong>${escapeHTML(s.height || "-")} cm</strong></div>
+        <div class="health-item"><small>Cân nặng</small><strong>${escapeHTML(s.weight || "-")} kg</strong></div>
+        <div class="health-item"><small>BMI</small><strong>${escapeHTML(s.bmi || "-")}</strong></div>
+        <div class="health-item"><small>Huyết áp</small><strong>${escapeHTML(s.bp || "-")}</strong></div>
+        <div class="health-item"><small>Thị lực phải</small><strong>${escapeHTML(s.visionRight || "-")}</strong></div>
+        <div class="health-item"><small>Thị lực trái</small><strong>${escapeHTML(s.visionLeft || "-")}</strong></div>
+      </div>
+      <div class="card" style="margin-top:12px;background:#f8fbfd">
+        <p><strong>Trạng thái:</strong> ${escapeHTML(s.status || "-")}</p>
+        <p style="margin-top:10px"><strong>Kết quả / nội dung theo dõi:</strong><br>${escapeHTML(s.result || "Chưa nhập")}</p>
+        <p style="margin-top:10px"><strong>Ghi chú:</strong><br>${escapeHTML(s.note || "Không có")}</p>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" onclick="closeViewModal();openStudentModal(${index})">✏️ Sửa hồ sơ</button>
+        <button class="btn btn-secondary" onclick="closeViewModal()">Đóng</button>
+      </div>`;
+    document.getElementById("viewStudentModal").classList.add("show");
+}
+
+function closeViewModal(){
+    document.getElementById("viewStudentModal").classList.remove("show");
+}
+
+
+/* =====================================================
+   XÓA
+===================================================== */
+
+function deleteStudent(index){
+
+    if(
+        confirm(
+            "Bạn có chắc muốn xóa hồ sơ học sinh này?"
+        )
+    ){
+
+        students.splice(index,1);
+
+        saveData();
+
+        renderStudents();
+
+        updateDashboard();
+
+        renderFollowUp();
+
+        renderReports();
+
+    }
+
+}
+
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
+function updateDashboard(){
+
+    let total =
+        students.length;
+
+
+    let profiles =
+        students.filter(s =>
+            s.name && s.className
+        ).length;
+
+
+    let examined =
+        students.filter(s =>
+            s.height ||
+            s.weight ||
+            s.bp ||
+            s.visionRight ||
+            s.visionLeft
+        ).length;
+
+
+    let follow =
+        students.filter(s =>
+            s.status === "Cần theo dõi"
+        ).length;
+
+
+    document.getElementById("totalStudents")
+        .innerText = total;
+
+    document.getElementById("profileStudents")
+        .innerText = profiles;
+
+    document.getElementById("examinedStudents")
+        .innerText = examined;
+
+    document.getElementById("followStudents")
+        .innerText = follow;
+
+}
+
+
+/* =====================================================
+   THEO DÕI
+===================================================== */
+
+function renderFollowUp(){
+
+    let table =
+        document.getElementById("followTable");
+
+
+    if(!table) return;
+
+
+    let list =
+        students.filter(
+            s => s.status === "Cần theo dõi"
+        );
+
+
+    table.innerHTML = "";
+
+
+    if(list.length === 0){
+
+        table.innerHTML = `
+        <tr>
+            <td colspan="4" class="empty">
+                Hiện chưa có học sinh cần theo dõi.
+            </td>
+        </tr>`;
+
+        return;
+
+    }
+
+
+    list.forEach(s => {
+
+        let index =
+            students.indexOf(s);
+
+
+        table.innerHTML += `
+
+        <tr>
+
+            <td>
+                <strong>
+                    ${escapeHTML(s.name)}
+                </strong>
+            </td>
+
+            <td>
+                ${escapeHTML(s.className)}
+            </td>
+
+            <td>
+                ${escapeHTML(
+                    s.result || "Chưa nhập nội dung"
+                )}
+            </td>
+
+            <td>
+
+                <button
+                    class="btn btn-primary"
+                    onclick="openStudentModal(${index})">
+                    Xem / sửa
+                </button>
+
+            </td>
+
+        </tr>`;
+
+    });
+
+}
+
+
+/* =====================================================
+   THỐNG KÊ
+===================================================== */
+
+function renderReports(){
+
+    let male =
+        students.filter(s => s.gender === "Nam").length;
+
+    let female =
+        students.filter(s => s.gender === "Nữ").length;
+
+
+    let normal =
+        students.filter(s => {
+
+            let bmi = parseFloat(s.bmi);
+
+            return bmi >= 18.5 && bmi < 25;
+
+        }).length;
+
+
+    let problem =
+        students.filter(
+            s => s.status === "Cần theo dõi"
+        ).length;
+
+
+    document.getElementById("maleCount")
+        .innerText = male;
+
+    document.getElementById("femaleCount")
+        .innerText = female;
+
+    document.getElementById("normalBMI")
+        .innerText = normal;
+
+    document.getElementById("problemCount")
+        .innerText = problem;
+
+
+    let classes =
+        [...new Set(
+            students
+            .map(s => s.className)
+            .filter(Boolean)
+        )]
+        .sort();
+
+
+    let table =
+        document.getElementById("classReport");
+
+
+    table.innerHTML = "";
+
+
+    classes.forEach(c => {
+
+        let list =
+            students.filter(
+                s => s.className === c
+            );
+
+
+        let m =
+            list.filter(s => s.gender === "Nam").length;
+
+
+        let f =
+            list.filter(s => s.gender === "Nữ").length;
+
+
+        let examined =
+            list.filter(s =>
+                s.height ||
+                s.weight ||
+                s.bp
+            ).length;
+
+
+        let follow =
+            list.filter(
+                s => s.status === "Cần theo dõi"
+            ).length;
+
+
+        table.innerHTML += `
+
+        <tr>
+
+            <td>${escapeHTML(c)}</td>
+
+            <td>${list.length}</td>
+
+            <td>${m}</td>
+
+            <td>${f}</td>
+
+            <td>${examined}</td>
+
+            <td>${follow}</td>
+
+        </tr>`;
+
+    });
+
+}
+
+
+/* =====================================================
+   XUẤT DỮ LIỆU
+===================================================== */
+
+function exportData(){
+
+    let data =
+        JSON.stringify(students,null,2);
+
+
+    let blob =
+        new Blob(
+            [data],
+            {type:"application/json"}
+        );
+
+
+    let url =
+        URL.createObjectURL(blob);
+
+
+    let a =
+        document.createElement("a");
+
+
+    a.href = url;
+
+    a.download =
+        "du-lieu-ho-so-suc-khoe.json";
+
+
+    a.click();
+
+
+    URL.revokeObjectURL(url);
+
+}
+
+
+/* =====================================================
+   NHẬP DỮ LIỆU
+===================================================== */
+
+function importData(event){
+
+    let file =
+        event.target.files[0];
+
+
+    if(!file) return;
+
+
+    let reader =
+        new FileReader();
+
+
+    reader.onload = function(e){
+
+        try{
+
+            let imported =
+                JSON.parse(e.target.result);
+
+
+            if(!Array.isArray(imported)){
+
+                alert(
+                    "File dữ liệu không hợp lệ!"
+                );
+
+                return;
+
+            }
+
+
+            students = imported;
+
+            saveData();
+
+            updateDashboard();
+
+            renderStudents();
+
+            renderFollowUp();
+
+            renderReports();
+
+
+            alert(
+                "Đã nhập dữ liệu thành công!"
+            );
+
+        }
+
+        catch(error){
+
+            alert(
+                "Không đọc được file dữ liệu!"
+            );
+
+        }
+
+    };
+
+
+    reader.readAsText(file);
+
+}
+
+
+/* =====================================================
+   XÓA TOÀN BỘ
+===================================================== */
+
+function clearAllData(){
+
+    if(
+        confirm(
+            "CẢNH BÁO!\n\n" +
+            "Toàn bộ hồ sơ học sinh sẽ bị xóa khỏi thiết bị.\n\n" +
+            "Bạn có chắc chắn không?"
+        )
+    ){
+
+        students = [];
+
+        saveData();
+
+        updateDashboard();
+
+        renderStudents();
+
+        renderFollowUp();
+
+        renderReports();
+
+    }
+
+}
+
+
+/* =====================================================
+   CHỐNG HTML INJECTION
+===================================================== */
+
+function escapeHTML(text){
+
+    if(text === undefined || text === null){
+        return "";
+    }
+
+    return String(text)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/* =====================================================
+   KHỞI ĐỘNG
+===================================================== */
+
+updateDashboard();
+
+renderStudents();
+
+renderFollowUp();
+
+renderReports();
+
+</script>
+
+</body>
+</html>
